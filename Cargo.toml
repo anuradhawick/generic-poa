@@ -1,0 +1,8 @@
+[package]
+name = "generic-poa"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ndarray = "0.15.6"
+petgraph = "0.6.5"
