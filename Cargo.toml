@@ -1,8 +1,15 @@
 [package]
-name = "generic-poa"
+name = "Generic-POA"
+description = "Generalised Partial Order Alignment"
 version = "0.1.0"
 edition = "2021"
+authors = ["Anuradha Wickramarachchi <anuradhawick@gmail.com>"]
+
+[[bin]]
+name = "gpoa"
+path = "src/main.rs"
 
 [dependencies]
+clap = { version = "4.5.7", features = ["derive"] }
 ndarray = "0.15.6"
 petgraph = "0.6.5"

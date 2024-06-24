@@ -1,3 +1,4 @@
+use crate::graph::{EdgeData, NodeData};
 use ndarray::Array2;
 use petgraph::{
     algo::toposort,
@@ -8,20 +9,18 @@ use petgraph::{
 use std::cmp::max;
 use std::collections::HashMap;
 
-use crate::graph::{EdgeData, NodeData};
-
 const MATCHSCORE: i32 = 1;
 const MISMATCHSCORE: i32 = -1;
 const GAP: i32 = -2;
 
 type Matrix = Array2<i32>;
 
-#[derive(Debug)]
-enum Move {
-    Insertion,
-    Deletion,
-    Match,
-}
+// #[derive(Debug)]
+// enum Move {
+//     Insertion,
+//     Deletion,
+//     Match,
+// }
 
 #[derive(Debug, Eq)]
 struct Candidate {
@@ -56,13 +55,18 @@ impl PartialOrd for Candidate {
 
 pub struct SeqGraphAlignment {
     pub seq: Vec<String>,
+    pub label: String,
     // pub graph: DiGraph<NodeData, EdgeData>,
     pub seq_match_positions: Vec<Option<i32>>,
     pub graph_match_node_indices: Vec<Option<NodeIndex>>,
 }
 
 impl SeqGraphAlignment {
-    pub fn align_seq_to_graph(seq: Vec<String>, graph: &DiGraph<NodeData, EdgeData>) -> Self {
+    pub fn align_seq_to_graph(
+        label: String,
+        seq: Vec<String>,
+        graph: &DiGraph<NodeData, EdgeData>,
+    ) -> Self {
         let indices = toposort(&graph, None).unwrap();
         let (
             mut scores,
@@ -70,7 +74,7 @@ impl SeqGraphAlignment {
             mut backtrack_score_graph,
             node_index_to_matrix_pos,
             matrix_pos_to_node_index,
-        ) = SeqGraphAlignment::prep_dp_matrix(&graph, &indices, &seq);
+        ) = SeqGraphAlignment::prep_dp_matrix(graph, &indices, &seq);
 
         // println!("Starting with scores \n {:?}", scores);
 
@@ -132,7 +136,7 @@ impl SeqGraphAlignment {
         // println!("backtrack_scores_seq \n{:?}", backtrack_scores_seq);
 
         let (seq_match_positions, graph_match_node_indices) = SeqGraphAlignment::backtrack(
-            &graph,
+            graph,
             &indices,
             &scores,
             &backtrack_scores_seq,
@@ -142,19 +146,25 @@ impl SeqGraphAlignment {
 
         Self {
             seq,
-            // graph,
+            label,
             seq_match_positions,
             graph_match_node_indices,
         }
     }
 
-    pub fn to_string(&self, graph: &DiGraph<NodeData, EdgeData>) -> (String, String, String) {
+    pub fn get_string(
+        &self,
+        graph: &DiGraph<NodeData, EdgeData>,
+    ) -> (usize, Vec<String>, Vec<String>, Vec<String>) {
+        let mut width = 0;
         let s1: Vec<String> = self
             .seq_match_positions
             .iter()
             .map(|item| {
                 if let Some(pos) = item {
-                    self.seq[*pos as usize].to_string()
+                    let s = self.seq[*pos as usize].to_string();
+                    width = max(width, s.len());
+                    s
                 } else {
                     String::from("-")
                 }
@@ -166,7 +176,9 @@ impl SeqGraphAlignment {
             .iter()
             .map(|item| {
                 if let Some(pos) = item {
-                    graph[*pos].item.clone()
+                    let s = graph[*pos].item.clone();
+                    width = max(width, s.len());
+                    s
                 } else {
                     String::from("-")
                 }
@@ -185,7 +197,7 @@ impl SeqGraphAlignment {
             })
             .collect();
 
-        (s1.join(""), m.join(""), s2.join(""))
+        (width, s1, m, s2)
     }
 
     fn backtrack(
@@ -223,10 +235,6 @@ impl SeqGraphAlignment {
                     besti = i + 1;
                 }
             }
-            println!("Terminal indices= {:?}", terminal_indices);
-            println!("besti= {:?}", besti);
-            println!("bestj= {:?}", bestj);
-            println!("best score= {:?}", best_score);
         }
 
         let mut graph_match_node_indices = vec![];
@@ -242,11 +250,8 @@ impl SeqGraphAlignment {
         {
             nexti = backtrack_score_graph[[besti as usize, bestj as usize]];
             nextj = backtrack_scores_seq[[besti as usize, bestj as usize]];
-
-            println!("-----");
-            println!("nexti = {nexti}");
-            println!("nextj = {nextj}");
             current_seq_pos = bestj - 1;
+
             current_node_index = if besti > 0 {
                 matrix_pos_to_node_index[&((besti - 1) as usize)]
             } else {
@@ -272,9 +277,6 @@ impl SeqGraphAlignment {
             besti = nexti;
             bestj = nextj;
         }
-
-        println!("{:?}", seq_match_positions);
-        println!("{:?}", graph_match_node_indices);
 
         (seq_match_positions, graph_match_node_indices)
     }
@@ -336,7 +338,7 @@ impl SeqGraphAlignment {
 }
 
 #[cfg(test)]
-mod graph_tests {
+mod alignment_tests {
     use crate::graph::POAGraph;
 
     use super::SeqGraphAlignment;
@@ -358,11 +360,11 @@ mod graph_tests {
             "X".to_string(),
             "T".to_string(),
         ];
-        let graph = POAGraph::new(seq1);
-        let sg_aln = SeqGraphAlignment::align_seq_to_graph(seq2, &graph.graph);
-        let (f1, m, f2) = sg_aln.to_string(&graph.graph);
-        println!("{f1}");
-        println!("{m}");
-        println!("{f2}");
+        let graph = POAGraph::new("seq_1".to_string(), seq1);
+        let sg_aln = SeqGraphAlignment::align_seq_to_graph("seq_2".to_string(), seq2, &graph.graph);
+        let (_, f1, m, f2) = sg_aln.get_string(&graph.graph);
+        println!("{f1:?}");
+        println!("{m:?}");
+        println!("{f2:?}");
     }
 }
