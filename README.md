@@ -1,5 +1,7 @@
 # Generic-POA
 
+[![Rust](https://github.com/anuradhawick/generic-poa/actions/workflows/rust.yml/badge.svg)](https://github.com/anuradhawick/generic-poa/actions/workflows/rust.yml)
+
 Generic-POA is a command-line tool for performing Generalised Partial Order Alignment (POA). It offers flexibility in output formats and is designed for applications where alignment, visualisation and manipulation are necessary.
 
 Core logic was adopted from [https://github.com/ljdursi/poapy](https://github.com/ljdursi/poapy). Following [Simpson Labs tutorial](http://simpsonlab.github.io/2015/05/01/understanding-poa/). Following are the original publications.
