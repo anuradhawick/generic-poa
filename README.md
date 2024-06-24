@@ -4,7 +4,7 @@
 
 Generic-POA is a command-line tool for performing Generalised Partial Order Alignment (POA). It offers flexibility in output formats and is designed for applications where alignment, visualisation and manipulation are necessary.
 
-Core logic was adopted from [https://github.com/ljdursi/poapy](https://github.com/ljdursi/poapy). Following [Simpson Labs tutorial](http://simpsonlab.github.io/2015/05/01/understanding-poa/). Following are the original publications.
+Core logic was adopted from [https://github.com/ljdursi/poapy](https://github.com/ljdursi/poapy) with the help of [Simpson Lab's tutorial by Jonathan Dursi](http://simpsonlab.github.io/2015/05/01/understanding-poa/). Following are the original publications.
 
 * [Christopher Lee, Catherine Grasso, Mark F. Sharlow, Multiple sequence alignment using partial order graphs , Bioinformatics, Volume 18, Issue 3, March 2002, Pages 452–464, https://doi.org/10.1093/bioinformatics/18.3.452](https://doi.org/10.1093/bioinformatics/18.3.452)
 * [Christopher Lee, Generating consensus sequences from partial order multiple sequence alignment graphs, Bioinformatics, Volume 19, Issue 8, May 2003, Pages 999–1008, https://doi.org/10.1093/bioinformatics/btg109](https://doi.org/10.1093/bioinformatics/btg109)
