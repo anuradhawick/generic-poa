@@ -1,14 +1,13 @@
+use alignment::SeqGraphAlignment;
+use clap::Parser;
+use consensus::Consensus;
+use graph::POAGraph;
 use std::{
     cmp::max,
     fmt::Write,
     fs::File,
     io::{BufRead, BufReader, BufWriter, Write as BufWrite},
 };
-
-use alignment::SeqGraphAlignment;
-use clap::Parser;
-use consensus::Consensus;
-use graph::POAGraph;
 mod alignment;
 mod args;
 mod consensus;
