@@ -2,6 +2,8 @@ use alignment::SeqGraphAlignment;
 use clap::Parser;
 use consensus::Consensus;
 use graph::POAGraph;
+use io::{write_dot, write_html};
+use petgraph::dot::{Config, Dot};
 use std::{
     cmp::max,
     fmt::Write,
@@ -12,6 +14,7 @@ mod alignment;
 mod args;
 mod consensus;
 mod graph;
+mod io;
 
 fn get_format(path: &str) -> char {
     if path.to_lowercase().ends_with(".csv") {
@@ -76,13 +79,11 @@ fn main() -> Result<(), String> {
     }
 
     if args.graph {
-        let graph = poa.get_string();
-        let file = File::create(format!("{}.graph", args.output))
-            .map_err(|_| format!("Unable to create file: {}", &args.output))?;
-        let mut writer = BufWriter::new(file);
-        writer
-            .write_all(graph.as_bytes())
-            .map_err(|_| "IO Error".to_string())?;
+        write_dot(&poa.graph, &args.output)?;
+    }
+
+    if args.html {
+        write_html(&poa.graph, &args.output)?;
     }
 
     let item_width = poa.width + 2;

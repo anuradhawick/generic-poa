@@ -1,10 +1,5 @@
 use crate::alignment::SeqGraphAlignment;
-use petgraph::{
-    algo::toposort,
-    graph::{DiGraph, NodeIndex},
-    visit::EdgeRef,
-    Direction,
-};
+use petgraph::graph::{DiGraph, NodeIndex};
 use std::cmp::max;
 
 #[derive(Debug)]
@@ -180,25 +175,6 @@ impl POAGraph {
         self.start_indices.push(first_node_index.unwrap());
     }
 
-    pub fn get_string(&self) -> String {
-        let indices = toposort(&self.graph, None).unwrap();
-        let mut output = String::new();
-        for index in indices {
-            output.push_str(&format!("{:?}:{}\n", index.index(), self.graph[index].item));
-
-            for edge in self.graph.edges_directed(index, Direction::Outgoing) {
-                output.push_str(&format!(
-                    "\t{:?} -> {:?} {:?}\n",
-                    edge.source().index(),
-                    edge.target().index(),
-                    edge.weight().labels
-                ));
-            }
-        }
-
-        output
-    }
-
     fn add_or_update_edge(&mut self, a: NodeIndex, b: NodeIndex, label: String) {
         if let Some(edge) = self.graph.find_edge(a, b) {
             self.graph[edge].labels.push(label);
@@ -269,6 +245,5 @@ mod graph_tests {
         let mut graph = POAGraph::new("seq_1".to_string(), seq1);
         let sg_aln = SeqGraphAlignment::align_seq_to_graph("seq_2".to_string(), seq2, &graph.graph);
         graph.add_alignment(sg_aln);
-        println!("{}", graph.get_string());
     }
 }
