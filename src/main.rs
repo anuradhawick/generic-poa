@@ -3,7 +3,6 @@ use clap::Parser;
 use consensus::Consensus;
 use graph::POAGraph;
 use io::{write_dot, write_html};
-use petgraph::dot::{Config, Dot};
 use std::{
     cmp::max,
     fmt::Write,
