@@ -80,17 +80,23 @@ seq_2  ACGT   ATTCC  ACGT     -      -
 seq_3  ACGT   ATTCC  ACGT   TTGG   ACGT  
 ```
 
-In `test/entries.tsv.aln.graph` file;
+In `test/entries.tsv.aln.graph.dot` file, which can be visualised by openning the `test/entries.tsv.aln.graph.html`.
 
-```
-0:ACGT
-	0 -> 1 ["seq_1", "seq_2", "seq_3"]
-1:ATTCC
-	1 -> 2 ["seq_1", "seq_2", "seq_3"]
-2:ACGT
-	2 -> 4 ["seq_3"]
-	2 -> 3 ["seq_1"]
-4:TTGG
-	4 -> 3 ["seq_3"]
-3:ACGT
+<p align="center">
+  <img src="./examples/entries.tsv.png" width="600"/>
+</p>
+
+```dot
+digraph {
+    0 [ label = "ACGT"]
+    1 [ label = "ATTCC"]
+    2 [ label = "ACGT"]
+    3 [ label = "ACGT"]
+    4 [ label = "TTGG"]
+    0 -> 1 [ label="Fragments: [seq_1, seq_2, seq_3]" ]
+    1 -> 2 [ label="Fragments: [seq_1, seq_2, seq_3]" ]
+    2 -> 3 [ label="Fragments: [seq_1]" ]
+    2 -> 4 [ label="Fragments: [seq_3]" ]
+    4 -> 3 [ label="Fragments: [seq_3]" ]
+}
 ```
